@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ArticlesController;
+use App\Http\Controllers\HomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,22 +15,21 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/', [HomeController::class,'index']);
+
+Route::group(['prefix'=>'articles'],function() {
+    Route::get('/', [ArticlesController::class, 'index']);
+
+    Route::get('/categories/', [ArticlesController::class, 'categoriesList'])
+        ->name('categories');
+
+    Route::get('/categories/{id}/', [ArticlesController::class, 'getArticlesByCat'])
+        ->where('id', '\d+')
+        ->name('category');
+
+    Route::get('/categories/{categoryId}/article/{id}', [ArticlesController::class, 'show'])
+        ->where('id', '\d+')
+        ->where('categoryId', '\d+')
+        ->name('articleDetail');
 });
 
-Route::get('/hello/', function () {
-    return 'hello world';
-});
-
-Route::get('/info/', function () {
-    return 'this is info page';
-});
-
-Route::get('/articles/', function () {
-    return 'this is articles page';
-});
-
-Route::get('/article/{id}', function (int $id) {
-    return "Статья с ID - {$id}";
-});
