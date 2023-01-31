@@ -17,6 +17,14 @@ use App\Http\Controllers\HomeController;
 
 Route::get('/', [HomeController::class,'index']);
 
+Route::get('/info/', function (){
+    return \View('info');
+});
+
+Route::get('/feedback/', function (){
+    return \View('feedback');
+});
+
 Route::group(['prefix'=>'articles'],function() {
     Route::get('/', [ArticlesController::class, 'index']);
 
