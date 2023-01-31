@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 class ArticlesController extends Controller
 {
-    private function categoriesDB(): array
+    public function categoriesDB(): array
     {
         $categories = [];
         for ($i = 1; $i <= 5; $i++) {
@@ -15,7 +15,7 @@ class ArticlesController extends Controller
         return $categories;
     }
 
-    private function articlesDB(): array
+    public function articlesDB(): array
     {
         $categories = $this->categoriesDB();
         $articles = [];
@@ -36,32 +36,16 @@ class ArticlesController extends Controller
     public function getArticlesByCat($catId)
     {
         $articles = $this ->articlesDB()[$catId];
-        $html = '';
-        foreach ($articles as $id=>$article){
-            $link = route('articleDetail',['id'=>$id,'categoryId'=>$catId]);
-            $html .= <<<HERE
-                <div style="margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #000;">
-                    <div style="font-size:20px; font-weight:bold;margin-bottom: 10px;">
-                        <a href="{$link}">{$article['name']}</a>
-                    </div>
-                    <p>{$article['anons']}</p>
-                    <p style="font-style: italic">{$article['date']}</p>
-                </div>
-                HERE;
-        }
-        return $html;
+        return \View('articles.section',['articles'=>$articles, 'catId'=>$catId]);
     }
 
     public function show($categoryId, $articleId)
     {
         $article = $this->articlesDB()[$categoryId][$articleId];
-        $catUrl = route('category',['id' => $categoryId]);
-        return <<<HERE
-            <h1>{$article['name']}</h1>
-            <p>{$article['descr']}</p>
-            <a href="{$catUrl}"><i>в категрию</i></a>
-        HERE;
-
+        return \View(
+            'articles.detail',
+            ['article' => $article, 'catId' => $categoryId, 'id' => $articleId]
+        );
     }
 
     public function index()
@@ -72,11 +56,9 @@ class ArticlesController extends Controller
     public function categoriesList()
     {
         $categories = $this->categoriesDB();
-        $html = '';
-        foreach ($categories as $id => $cat) {
-            $route = route('category',['id' => $id]);
-            $html .= '<a href="'.$route.'">'.$cat.'</a><br>';
-        }
-        return $html;
+        return \View(
+            'articles.categories',
+            ['categories' => $categories]
+        );
     }
 }
